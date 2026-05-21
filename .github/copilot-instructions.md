@@ -208,3 +208,69 @@ if feature_flags.is_enabled("new_feature"):
 **Examples**: Browse `comfy_extras/` for V3 node patterns, `comfy_api_nodes/` for API integrations
 
 **Workflows**: https://comfyanonymous.github.io/ComfyUI_examples/
+
+---
+
+## Local Environment (SoleipDreams)
+
+> This section documents the specific setup of this installation. Keep it updated when models or workflows change.
+
+### Installed Models Quick Reference
+
+**Checkpoints (SD 1.5):** `dreamshaper_8`, `revAnimated_v2Rebirth`, `juggernaut_reborn`
+**Checkpoints (SDXL):** `sd_xl_base_1.0`, `illustriousXL_v01`
+**Checkpoints (Illustrious/anime):** `fabricatedXL_v70`, `waiIllustriousSDXL_v160`
+**LoRAs:** watercolor, aquarelle, graphite/pencil/sketch styles, flat_color_anime_xl, pixel-art-xl, industrial_design, logo styles — see [MODELS_MANIFEST.md](../MODELS_MANIFEST.md)
+**ControlNet:** OpenPose + Canny (SD1.5), OpenPose + Canny + Depth (SDXL)
+**IPAdapter:** sd15, plus_sdxl, faceid-plusv2_sdxl, noobIPAMARK1
+**Upscalers:** 4x_foolhardy_Remacri (general), RealESRGAN_x4plus_anime_6B (anime)
+**Segmentation:** SAM (vit_b, vit_h), BiRefNet, RMBG-2.0, Ultralytics face/hand/person
+
+### Workflow Recommendations by Use Case
+
+| Caso de uso | Checkpoint | Resolución | LoRA sugerida | Tiempo |
+|-------------|-----------|-----------|---------------|--------|
+| Boceto rápido | `dreamshaper_8` | 512x768 | pencil_sketch / GraphiteSketch | ~25s |
+| Splash art (estilo LoL) | `illustriousXL_v01` | 768x1024 | NewFantasyCoreV4_ILL | 2-3 min |
+| Anime limpio | `waiIllustriousSDXL_v160` | 768x1024 | flat_color_anime_xl / animeoutline | 2 min |
+| Arte con textura | `dreamshaper_8` o `illustriousXL_v01` | 512x768 | Aquarelle / watercolor / Sketch_offcolor | ~30s |
+| Logo / diseño | `sd_xl_base_1.0` | 1024x1024 | LogoRedmondV2 / Industrial_Design | 3 min |
+| Alta calidad final | cualquier SDXL | 512x768 → upscale 4x | — | 30s + 20s upscale |
+
+**Pose control**: usar `control_v11p_sd15_openpose` (SD1.5) o `OpenPoseXL2` / `noobaiXLControlnet_openposeModel` (SDXL)
+**Face/body refinement**: IPAdapter `faceid-plusv2_sdxl` + SAM segmentation nodes
+
+### Project Folder Structure
+
+```
+SoleipDreams/
+├── Documentation/   # Guías: SETUP_RTX4060.md, INSTRUCCIONES_SPLASH_ART.md
+├── Projects/
+│   └── Videogames/
+│       ├── Qualm/   # 2D top-down horde survivor
+│       └── Sinpo/   # En desarrollo
+└── Resources/
+    └── OpenPose/    # Poses de referencia para ControlNet
+```
+
+### Maintenance Scripts
+
+| Script | Uso |
+|--------|-----|
+| `.\update_comfyui.ps1` | Sync upstream → merge → pip install → push fork |
+| `.\update_comfyui.ps1 -UpdateTorch -PushFork` | Actualización completa incluyendo PyTorch |
+| `.\backup_comfyui.ps1` | Backup de user/, manifests, SoleipDreams/ |
+| `.\backup_comfyui.ps1 -IncludeOutput` | Backup + imágenes generadas |
+| `.\run_comfyui_optimized.ps1` | Lanzar ComfyUI con optimizaciones RTX 4060 |
+
+### Merge Conflict Policy (upstream updates)
+
+When running `update_comfyui.ps1`, conflicts only occur in version/build files:
+- `comfyui_version.py`, `pyproject.toml`, `requirements.txt` → **upstream always wins**
+- Custom scripts (`run_comfyui_*.ps1`, `update_comfyui.ps1`, `backup_comfyui.ps1`) → never conflict (not in upstream)
+- `SoleipDreams/`, `MODELS_MANIFEST.md`, `CUSTOM_NODES.md` → never conflict (not in upstream)
+
+### Custom Nodes
+
+Currently: **none installed** (clean environment, built-in nodes only).
+See [CUSTOM_NODES.md](../CUSTOM_NODES.md) for the tracking list and install candidates.
