@@ -152,6 +152,19 @@ if ($DryRun) {
     Info "Instalando requirements.txt..."
     & $pip install -r requirements.txt --upgrade --quiet
     Success "requirements.txt actualizado"
+
+    # Verificar que CUDA siga disponible tras el upgrade (PyPI puede instalar torch+cpu)
+    $python = "$ScriptDir\.venv\Scripts\python.exe"
+    $cudaOk = & $python -c "import torch; print(torch.cuda.is_available())" 2>$null
+    if ($cudaOk -ne "True") {
+        Warn "PyPI reemplazó PyTorch con version CPU. Restaurando cu130..."
+        & $pip install torch==2.12.0+cu130 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130 --quiet
+        $torchVer = & $pip show torch | Select-String "^Version:" | ForEach-Object { $_.ToString().Split(":")[1].Trim() }
+        Success "PyTorch CUDA restaurado: $torchVer"
+    } else {
+        $torchVer = & $pip show torch | Select-String "^Version:" | ForEach-Object { $_.ToString().Split(":")[1].Trim() }
+        Success "PyTorch $torchVer (CUDA OK)"
+    }
 }
 
 # ---- Actualizar PyTorch (opcional) ----
