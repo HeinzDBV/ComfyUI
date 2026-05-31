@@ -3,9 +3,9 @@
 # Guarda user/, workflows y manifests en una carpeta de backup
 # ============================================================
 # Uso:
-#   .\backup_comfyui.ps1                    # Backup completo
-#   .\backup_comfyui.ps1 -IncludeOutput     # + carpeta output/ (imagenes generadas)
-#   .\backup_comfyui.ps1 -Destination D:\Backups\ComfyUI
+#   .\SoleipDreams\Scripts\backup_comfyui.ps1                    # Backup completo
+#   .\SoleipDreams\Scripts\backup_comfyui.ps1 -IncludeOutput     # + carpeta output/ (imagenes generadas)
+#   .\SoleipDreams\Scripts\backup_comfyui.ps1 -Destination D:\Backups\ComfyUI
 # ============================================================
 
 param(
@@ -14,7 +14,8 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$SourceDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$SourceDir = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
 $Timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm"
 $BackupDir = Join-Path $Destination $Timestamp
 
@@ -68,10 +69,10 @@ Header "3. Backup manifests (recuperabilidad)"
 $Manifests = @(
     "MODELS_MANIFEST.md",
     "CUSTOM_NODES.md",
-    "update_comfyui.ps1",
-    "backup_comfyui.ps1",
-    "run_comfyui_optimized.ps1",
-    "run_comfyui_optimized.bat",
+    "SoleipDreams\Scripts\update_comfyui.ps1",
+    "SoleipDreams\Scripts\backup_comfyui.ps1",
+    "SoleipDreams\Scripts\comfyui_hub.ps1",
+    "SoleipDreams\ComfyUI.lnk",
     "requirements.txt"
 )
 $ManifestDst = Join-Path $BackupDir "manifests"
@@ -120,7 +121,7 @@ if ($IncludeOutput) {
 Header "6. Generando index"
 $IndexPath = Join-Path $BackupDir "BACKUP_INDEX.txt"
 $IndexContent = @"
-ComfyUI Backup — $Timestamp
+ComfyUI Backup - $Timestamp
 Fuente: $SourceDir
 ComfyUI version: $(Select-String -Path "$SourceDir\comfyui_version.py" -Pattern '__version__.*"([^"]+)"' | ForEach-Object { $_.Matches[0].Groups[1].Value })
 

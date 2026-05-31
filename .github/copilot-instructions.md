@@ -257,20 +257,40 @@ SoleipDreams/
 
 | Script | Uso |
 |--------|-----|
-| `.\update_comfyui.ps1` | Sync upstream → merge → pip install → push fork |
-| `.\update_comfyui.ps1 -UpdateTorch -PushFork` | Actualización completa incluyendo PyTorch |
-| `.\backup_comfyui.ps1` | Backup de user/, manifests, SoleipDreams/ |
-| `.\backup_comfyui.ps1 -IncludeOutput` | Backup + imágenes generadas |
-| `.\run_comfyui_optimized.ps1` | Lanzar ComfyUI con optimizaciones RTX 4060 |
+| `.\SoleipDreams\Scripts\update_comfyui.ps1` | Sync upstream → merge → pip install → push fork |
+| `.\SoleipDreams\Scripts\update_comfyui.ps1 -UpdateTorch -PushFork` | Actualización completa incluyendo PyTorch |
+| `.\SoleipDreams\Scripts\backup_comfyui.ps1` | Backup de user/, manifests, SoleipDreams/ |
+| `.\SoleipDreams\Scripts\backup_comfyui.ps1 -IncludeOutput` | Backup + imágenes generadas |
+| `.\SoleipDreams\ComfyUI.lnk` | Abrir hub diario (modos de arranque, update y backup) |
+| `.\SoleipDreams\Scripts\comfyui_hub.ps1` | Abrir hub diario desde terminal |
 
 ### Merge Conflict Policy (upstream updates)
 
-When running `update_comfyui.ps1`, conflicts only occur in version/build files:
+When running `SoleipDreams/Scripts/update_comfyui.ps1`, conflicts only occur in version/build files:
 - `comfyui_version.py`, `pyproject.toml`, `requirements.txt` → **upstream always wins**
-- Custom scripts (`run_comfyui_*.ps1`, `update_comfyui.ps1`, `backup_comfyui.ps1`) → never conflict (not in upstream)
+- Custom scripts (`SoleipDreams/Scripts/comfyui_hub.ps1`, `SoleipDreams/Scripts/update_comfyui.ps1`, `SoleipDreams/Scripts/backup_comfyui.ps1`) → never conflict (not in upstream)
 - `SoleipDreams/`, `MODELS_MANIFEST.md`, `CUSTOM_NODES.md` → never conflict (not in upstream)
 
 ### Custom Nodes
 
 Currently: **none installed** (clean environment, built-in nodes only).
 See [CUSTOM_NODES.md](../CUSTOM_NODES.md) for the tracking list and install candidates.
+
+### Copilot AI Ecosystem (Local)
+
+Use the local Copilot ecosystem to keep workflow guidance modular and reusable.
+
+- Core instructions: `.github/instructions/`
+- Role agents: `.github/agents/`
+- Skills index and skill packages: `.github/skills/`
+- Governance manifest: `SoleipDreams/AI-Ecosystem/MANIFEST.md`
+
+Default operating loop:
+1. Use **Architect** behavior to define staged graph design.
+2. Use **Builder** behavior to produce concrete node setup steps.
+3. Use **Reviewer** behavior to validate VRAM fit and failure resilience.
+
+When adding new ecosystem capabilities:
+- Keep changes additive and update the manifest.
+- Use `Use when ...` trigger phrases in descriptions for discoverability.
+- Prefer practical workflow outputs with explicit fallback paths.

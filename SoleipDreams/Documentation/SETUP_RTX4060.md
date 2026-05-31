@@ -10,14 +10,19 @@ Modelo Recomendado: Stable Diffusion 1.5 ✅
 
 ## 🚀 INICIO RÁPIDO
 
-### 1. Ejecutar ComfyUI Optimizado
-Usa uno de estos scripts optimizados para tu GPU:
-```bash
-# Opción 1 (recomendado):
-.\run_comfyui_optimized.ps1
+### 0. Uso diario recomendado (acceso directo)
+Abre `SoleipDreams/ComfyUI.lnk` para entrar al **Hub diario**.
+Desde ese menú puedes:
+- Iniciar en modo optimizado, estándar, manager o lowvram
+- Abrir navegador automáticamente cuando ComfyUI ya esté listo
+- Ejecutar update (normal o dry-run)
+- Ejecutar backup (normal o con output)
+- Validar prerequisitos de todos los modos
 
-# Opción 2:
-.\run_comfyui_optimized.bat
+### 1. Ejecutar el Hub manualmente (sin acceso directo)
+Si prefieres iniciarlo por terminal:
+```bash
+.\SoleipDreams\Scripts\comfyui_hub.ps1
 ```
 
 ### 2. Cargar Workflow Optimizado
@@ -84,17 +89,21 @@ ControlNet Strength: 0.75-0.85
 
 ```
 D:\IA\ComfyUI\
-├── run_comfyui_optimized.bat/ps1  ← Scripts de inicio optimizados
+├── SoleipDreams/
+│   ├── Scripts/
+│   │   ├── comfyui_hub.ps1                ← Launcher diario (modos/update/backup)
+│   │   ├── update_comfyui.ps1
+│   │   └── backup_comfyui.ps1
+│   ├── Workflows/
+│   │   ├── workflow_splash_art_SD15_optimized.json  ← USAR ESTE
+│   │   └── README_WORKFLOWS.md    ← Info de workflows
+│   └── Documentation/
+│       └── INSTRUCCIONES_SPLASH_ART.md  ← Guía completa
 ├── models/
 │   ├── checkpoints/               ← Pon aquí DreamShaper 8
 │   ├── controlnet/                ← Pon aquí OpenPose SD15
 │   └── upscale_models/            ← Pon aquí RealESRGAN 4x
-└── SoleipDreams/
-    ├── Workflows/
-    │   ├── workflow_splash_art_SD15_optimized.json  ← USAR ESTE
-    │   └── README_WORKFLOWS.md    ← Info de workflows
-    └── Documentation/
-        └── INSTRUCCIONES_SPLASH_ART.md  ← Guía completa
+└── ...
 ```
 
 ## 🎨 EJEMPLO DE PROMPT

@@ -3,10 +3,10 @@
 # Sincroniza con Comfy-Org/ComfyUI (upstream) y actualiza deps
 # ============================================================
 # Uso:
-#   .\update_comfyui.ps1                   # Update normal
-#   .\update_comfyui.ps1 -UpdateTorch      # Update + reinstala PyTorch
-#   .\update_comfyui.ps1 -PushFork         # Update + push a tu fork (origin)
-#   .\update_comfyui.ps1 -DryRun           # Solo muestra qu? cambio sin aplicar
+#   .\SoleipDreams\Scripts\update_comfyui.ps1                   # Update normal
+#   .\SoleipDreams\Scripts\update_comfyui.ps1 -UpdateTorch      # Update + reinstala PyTorch
+#   .\SoleipDreams\Scripts\update_comfyui.ps1 -PushFork         # Update + push a tu fork (origin)
+#   .\SoleipDreams\Scripts\update_comfyui.ps1 -DryRun           # Solo muestra que cambio sin aplicar
 # ============================================================
 
 param(
@@ -17,7 +17,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-Set-Location $ScriptDir
+$RepoDir = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
+Set-Location $RepoDir
 
 # ---- Colores utiles ----
 function Info    { param($msg) Write-Host "  $msg" -ForegroundColor Cyan }
@@ -27,13 +28,13 @@ function Err     { param($msg) Write-Host "  [X]  $msg" -ForegroundColor Red }
 function Header  { param($msg) Write-Host "`n=== $msg ===" -ForegroundColor Magenta }
 
 function Get-LocalVersion {
-    $ver = Select-String -Path "$ScriptDir\comfyui_version.py" -Pattern '__version__\s*=\s*"([^"]+)"'
+    $ver = Select-String -Path "$RepoDir\comfyui_version.py" -Pattern '__version__\s*=\s*"([^"]+)"'
     if ($ver) { return $ver.Matches[0].Groups[1].Value }
     return "desconocida"
 }
 
 function Get-PipExe {
-    $pip = "$ScriptDir\.venv\Scripts\pip.exe"
+    $pip = "$RepoDir\.venv\Scripts\pip.exe"
     if (-not (Test-Path $pip)) {
         Err "No se encontro .venv\Scripts\pip.exe"
         Err "Asegurate de tener el entorno virtual en .venv"
@@ -154,10 +155,10 @@ if ($DryRun) {
     Success "requirements.txt actualizado"
 
     # Verificar que CUDA siga disponible tras el upgrade (PyPI puede instalar torch+cpu)
-    $python = "$ScriptDir\.venv\Scripts\python.exe"
+    $python = "$RepoDir\.venv\Scripts\python.exe"
     $cudaOk = & $python -c "import torch; print(torch.cuda.is_available())" 2>$null
     if ($cudaOk -ne "True") {
-        Warn "PyPI reemplazó PyTorch con version CPU. Restaurando cu130..."
+        Warn "PyPI reemplazo PyTorch con version CPU. Restaurando cu130..."
         & $pip install torch==2.12.0+cu130 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130 --quiet
         $torchVer = & $pip show torch | Select-String "^Version:" | ForEach-Object { $_.ToString().Split(":")[1].Trim() }
         Success "PyTorch CUDA restaurado: $torchVer"
@@ -206,6 +207,6 @@ if ($PushFork) {
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Para iniciar ComfyUI usa:" -ForegroundColor Yellow
-Write-Host "  .\run_comfyui_optimized.ps1   (RTX 4060 optimizado)" -ForegroundColor White
-Write-Host "  .\run_comfyui.bat             (estandar)" -ForegroundColor White
+Write-Host "  .\SoleipDreams\ComfyUI.lnk                    (hub diario)" -ForegroundColor White
+Write-Host "  .\SoleipDreams\Scripts\comfyui_hub.ps1       (menu en terminal)" -ForegroundColor White
 Write-Host ""
